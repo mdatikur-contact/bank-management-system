@@ -58,6 +58,7 @@ public class BankManagementSystem {
         saveAccounts();
     }
 
+    @SuppressWarnings("unchecked")
     static void loadAccounts() {
         try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(FILE_NAME))) {
             accounts = (ArrayList<Account>) ois.readObject();
