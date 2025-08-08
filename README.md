@@ -20,7 +20,7 @@ It allows users to **create accounts, log in, deposit, withdraw, transfer funds*
 
 ## 🖼 Screenshots
 
-![Banking System Screenshot](https://raw.githubusercontent.com/yourusername/bank-management-system/main/screenshots/screenshot1.png)
+<img width="808" height="557" alt="image" src="https://github.com/user-attachments/assets/3042269f-1cf6-4dfa-b1ff-fbc55858b56a" />
 
 ---
 
