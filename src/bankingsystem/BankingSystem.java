@@ -1,0 +1,99 @@
+package bankingsystem;
+
+import java.io.*;
+import java.util.ArrayList;
+
+public class BankingSystem {
+    private static final String FILE_NAME = "accounts.ser";
+    private static ArrayList<Account> accounts = new ArrayList<>();
+
+    private static Account currentAccount = null;  // ✅ Track logged-in user
+
+    public static void loadAccounts() {
+        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(FILE_NAME))) {
+            accounts = (ArrayList<Account>) ois.readObject();
+        } catch (Exception ignored) {}
+    }
+
+    public static void saveAccounts() {
+        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(FILE_NAME))) {
+            oos.writeObject(accounts);
+        } catch (IOException ignored) {}
+    }
+
+    public static boolean createAccount(String name, String dob, int phone, String password) {
+        if (findAccountByPhone(phone) != null) return false;
+        accounts.add(new Account(name, dob, phone, password));
+        saveAccounts();
+        return true;
+    }
+
+    public static Account findAccount(int phone, String password) {
+        for (Account acc : accounts) {
+            if (acc.getPhone() == phone && acc.getPassword().equals(password)) return acc;
+        }
+        return null;
+    }
+
+    public static Account findAccountByPhone(int phone) {
+        for (Account acc : accounts) {
+            if (acc.getPhone() == phone) return acc;
+        }
+        return null;
+    }
+
+    public static ArrayList<Account> getAccounts() {
+        return accounts;
+    }
+
+    // ✅ Login method
+    public static boolean login(int phone, String password) {
+        Account acc = findAccount(phone, password);
+        if (acc != null) {
+            currentAccount = acc;
+            return true;
+        }
+        return false;
+    }
+
+    // ✅ Logout method
+    public static void logout() {
+        currentAccount = null;
+    }
+
+    // ✅ Get currently logged-in account
+    public static Account getCurrentAccount() {
+        return currentAccount;
+    }
+
+    // ✅ Deposit only if logged in
+    public static boolean deposit(double amount) {
+        if (currentAccount != null) {
+            currentAccount.deposit((float) amount);
+            saveAccounts();
+            return true;
+        }
+        return false;
+    }
+
+    // ✅ Withdraw only if logged in
+    public static boolean withdraw(double amount) {
+        if (currentAccount != null && currentAccount.withdraw((float) amount)) {
+            saveAccounts();
+            return true;
+        }
+        return false;
+    }
+
+    // ✅ Transfer only if logged in
+    public static boolean transfer(int toPhone, double amount) {
+        if (currentAccount == null) return false;
+        Account toAcc = findAccountByPhone(toPhone);
+        if (toAcc != null && currentAccount.withdraw((float) amount)) {
+            toAcc.deposit((float) amount);
+            saveAccounts();
+            return true;
+        }
+        return false;
+    }
+}
