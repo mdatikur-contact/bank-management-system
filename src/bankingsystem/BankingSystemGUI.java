@@ -1,4 +1,3 @@
-// BankingSystemGUI.java
 package bankingsystem;
 
 import javax.swing.*;
@@ -28,7 +27,11 @@ public class BankingSystemGUI extends JFrame {
         JPanel menuPanel = new JPanel(new GridLayout(0, 1, 10, 10));
         menuPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
-        String[] menuItems = {"Create Account", "Login", "Deposit", "Withdraw", "Transfer", "Show All Accounts"};
+        // ✅ Added "Status" option to menu
+        String[] menuItems = {
+            "Create Account", "Login", "Deposit", "Withdraw",
+            "Transfer", "Status", "Show All Accounts"
+        };
         for (String item : menuItems) {
             JButton btn = new JButton(item);
             btn.setFont(new Font("Segoe UI", Font.PLAIN, 16));
@@ -46,6 +49,7 @@ public class BankingSystemGUI extends JFrame {
         contentPanel.add(depositPanel(), "Deposit");
         contentPanel.add(withdrawPanel(), "Withdraw");
         contentPanel.add(transferPanel(), "Transfer");
+        contentPanel.add(statusPanel(), "Status"); // ✅ New status panel
         contentPanel.add(showAllPanel(), "Show All Accounts");
 
         add(contentPanel, BorderLayout.CENTER);
@@ -237,6 +241,33 @@ public class BankingSystemGUI extends JFrame {
         return panel;
     }
 
+    // ✅ New "Status" panel
+    private JPanel statusPanel() {
+        JPanel panel = new JPanel(new BorderLayout());
+        JTextArea statusArea = new JTextArea();
+        statusArea.setEditable(false);
+        JButton refreshBtn = new JButton("Refresh");
+
+        refreshBtn.addActionListener(e -> {
+            Account acc = BankingSystem.getCurrentAccount();
+            if (acc != null) {
+                statusArea.setText(
+                    "👤 Name: " + acc.getName() +
+                    "\n📞 Account Number: " + acc.getPhone() +
+                    "\n🎂 Date of Birth: " + acc.getDob() +
+                    "\n💰 Current Balance: " + acc.getBalance()
+                );
+            } else {
+                statusArea.setText("⚠ No user logged in.");
+            }
+        });
+
+        panel.add(new JScrollPane(statusArea), BorderLayout.CENTER);
+        panel.add(refreshBtn, BorderLayout.SOUTH);
+        return panel;
+    }
+
+    // ✅ Updated "Show All Accounts" (no balance)
     private JPanel showAllPanel() {
         JPanel panel = new JPanel(new BorderLayout());
         JTextArea allAccountsArea = new JTextArea();
@@ -246,8 +277,7 @@ public class BankingSystemGUI extends JFrame {
             ArrayList<Account> list = BankingSystem.getAccounts();
             StringBuilder sb = new StringBuilder();
             for (Account acc : list) {
-                sb.append(acc.getName()).append(" - ").append(acc.getPhone())
-                  .append(" - Balance: ").append(acc.getBalance()).append("\n");
+                sb.append(acc.getName()).append(" - ").append(acc.getPhone()).append("\n");
             }
             allAccountsArea.setText(sb.toString());
         });

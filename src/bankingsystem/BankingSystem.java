@@ -6,8 +6,7 @@ import java.util.ArrayList;
 public class BankingSystem {
     private static final String FILE_NAME = "accounts.ser";
     private static ArrayList<Account> accounts = new ArrayList<>();
-
-    private static Account currentAccount = null;  // ✅ Track logged-in user
+    private static Account currentAccount = null;  // Track logged-in user
 
     public static void loadAccounts() {
         try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(FILE_NAME))) {
@@ -46,7 +45,6 @@ public class BankingSystem {
         return accounts;
     }
 
-    // ✅ Login method
     public static boolean login(int phone, String password) {
         Account acc = findAccount(phone, password);
         if (acc != null) {
@@ -56,17 +54,14 @@ public class BankingSystem {
         return false;
     }
 
-    // ✅ Logout method
     public static void logout() {
         currentAccount = null;
     }
 
-    // ✅ Get currently logged-in account
     public static Account getCurrentAccount() {
         return currentAccount;
     }
 
-    // ✅ Deposit only if logged in
     public static boolean deposit(double amount) {
         if (currentAccount != null) {
             currentAccount.deposit((float) amount);
@@ -76,7 +71,6 @@ public class BankingSystem {
         return false;
     }
 
-    // ✅ Withdraw only if logged in
     public static boolean withdraw(double amount) {
         if (currentAccount != null && currentAccount.withdraw((float) amount)) {
             saveAccounts();
@@ -85,7 +79,6 @@ public class BankingSystem {
         return false;
     }
 
-    // ✅ Transfer only if logged in
     public static boolean transfer(int toPhone, double amount) {
         if (currentAccount == null) return false;
         Account toAcc = findAccountByPhone(toPhone);
